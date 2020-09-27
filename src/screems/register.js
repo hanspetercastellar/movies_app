@@ -12,80 +12,49 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Loader from './Components/loader';
+import {user} from '../helpers/requests';
 
 const RegisterScreen = (props) => {
   let [userName, setUserName] = useState('');
   let [userEmail, setUserEmail] = useState('');
-  let [password, setPassworde] = useState('');
-  let [repeatPasswprd, setRepeatPasswprd] = useState('');
+  let [password, setPassword] = useState('');
+  let [repeatPasswprd, setRepeatPassword] = useState('');
   let [loading, setLoading] = useState(false);
   let [errortext, setErrortext] = useState('');
   let [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
-
-  const handleSubmitButton = () => {
-    setErrortext('');
+  const handleSubmit = () => {
     if (!userName) {
-      alert('Ingrese Un Usuario');
+      alert('Ingrese el Nombre de Usuario');
       return;
     }
     if (!userEmail) {
-      alert('Ingrese Un Correo');
+      alert('Ingrese un Correo Electronico');
       return;
     }
     if (!password) {
-      alert('Ingrese Una Contraseña');
+      alert('Ingrese el Contraseña');
       return;
     }
     if (!repeatPasswprd) {
-      alert('Por favor Repita la Contraseña');
+      alert('Debe repetir la contraseña');
       return;
     }
     if (password !== repeatPasswprd) {
-      alert('Las contraseñas no Coinciden');
+      alert('Las Contraseñas no Coinciden');
       return;
     }
-    //Show Loader
-    setLoading(true);
-    var dataToSend = {
-      user_name: userName,
-      user_email: userEmail,
-      password,
+    const dataTosend = {
+      nickname: userName,
+      email: userEmail,
+      password: password,
     };
-    var formBody = [];
-    for (var key in dataToSend) {
-      var encodedKey = encodeURIComponent(key);
-      var encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-
-    fetch('https://aboutreact.herokuapp.com/register.php', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
+    setLoading(true);
+    user.post(dataTosend).then((res) => {
+      if (res.success) {
         setLoading(false);
-        console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status == 1) {
-          setIsRegistraionSuccess(true);
-          console.log('Registration Successful. Please Login to proceed');
-        } else {
-          setErrortext('Registration Unsuccessful');
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
-      });
+        alert(res.message);
+      }
+    });
   };
   if (isRegistraionSuccess) {
     return (
@@ -95,10 +64,10 @@ const RegisterScreen = (props) => {
           backgroundColor: '#307ecc',
           justifyContent: 'center',
         }}>
-        <Image
-          source={require('../Image/success.png')}
-          style={{height: 150, resizeMode: 'contain', alignSelf: 'center'}}
-        />
+        {/*<Image*/}
+        {/*  source={require('../Image/success.png')}*/}
+        {/*  style={{height: 150, resizeMode: 'contain', alignSelf: 'center'}}*/}
+        {/*/>*/}
         <Text style={styles.successTextStyle}>Registration Successful.</Text>
         <TouchableOpacity
           style={styles.buttonStyle}
@@ -110,33 +79,22 @@ const RegisterScreen = (props) => {
     );
   }
   return (
-    <View style={{flex: 1, backgroundColor: '#307ecc'}}>
-      <Loader loading={loading} />
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={{alignItems: 'center'}}>
-          <Image
-            source={require('../Image/aboutreact.png')}
-            style={{
-              width: '50%',
-              height: 100,
-              resizeMode: 'contain',
-              margin: 30,
-            }}
-          />
+        <View style={{alignItems: 'center', marginTop: 50}}>
+          <Text style={styles.titleLogin}>Registrar Usuario</Text>
         </View>
         <KeyboardAvoidingView enabled>
           <View style={styles.SectionStyle}>
             <TextInput
               style={styles.inputStyle}
-              onChangeText={(UserName) => setUserName(UserName)}
-              underlineColorAndroid="#FFFFFF"
-              placeholder="Enter Name"
-              placeholderTextColor="#F6F6F7"
-              autoCapitalize="sentences"
+              onChangeText={(userName) => setUserName(userName)}
+              placeholder="Nombre de Usuario" //dummy@abc.com
+              placeholderTextColor="#c1c1c1"
+              autoCapitalize="none"
+              keyboardType="default"
+              maxLength={50}
               returnKeyType="next"
-              onSubmitEditing={() =>
-                this._emailinput && this._emailinput.focus()
-              }
               blurOnSubmit={false}
             />
           </View>
@@ -144,60 +102,53 @@ const RegisterScreen = (props) => {
             <TextInput
               style={styles.inputStyle}
               onChangeText={(UserEmail) => setUserEmail(UserEmail)}
-              underlineColorAndroid="#F6F6F7"
-              placeholder="Enter Email"
-              placeholderTextColor="#F6F6F7"
+              placeholder="Email" //dummy@abc.com
+              placeholderTextColor="#c1c1c1"
+              autoCapitalize="none"
               keyboardType="email-address"
-              ref={(ref) => {
-                this._emailinput = ref;
-              }}
               returnKeyType="next"
-              onSubmitEditing={() => this._ageinput && this._ageinput.focus()}
+              maxLength={40}
               blurOnSubmit={false}
             />
           </View>
           <View style={styles.SectionStyle}>
             <TextInput
               style={styles.inputStyle}
-              onChangeText={(UserAge) => setUserAge(UserAge)}
-              underlineColorAndroid="#F6F6F7"
-              placeholder="Enter Age"
-              placeholderTextColor="#F6F6F7"
-              keyboardType="numeric"
-              ref={(ref) => {
-                this._ageinput = ref;
-              }}
-              onSubmitEditing={() =>
-                this._addressinput && this._addressinput.focus()
-              }
+              onChangeText={(password) => setPassword(password)}
+              placeholder="Contraseña" //dummy@abc.com
+              placeholderTextColor="#c1c1c1"
+              autoCapitalize="none"
+              returnKeyType="next"
+              maxLength={64}
+              secureTextEntry={true}
               blurOnSubmit={false}
             />
           </View>
           <View style={styles.SectionStyle}>
             <TextInput
               style={styles.inputStyle}
-              onChangeText={(UserAddress) => setUserAddress(UserAddress)}
-              underlineColorAndroid="#FFFFFF"
-              placeholder="Enter Address"
-              placeholderTextColor="#F6F6F7"
-              autoCapitalize="sentences"
-              ref={(ref) => {
-                this._addressinput = ref;
-              }}
+              onChangeText={(password) => setRepeatPassword(password)}
+              placeholder="Repita la Contraseña" //dummy@abc.com
+              placeholderTextColor="#c1c1c1"
+              autoCapitalize="none"
               returnKeyType="next"
-              onSubmitEditing={Keyboard.dismiss}
+              maxLength={64}
+              secureTextEntry={true}
               blurOnSubmit={false}
             />
           </View>
-          {errortext != '' ? (
-            <Text style={styles.errorTextStyle}> {errortext} </Text>
-          ) : null}
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            activeOpacity={0.5}
-            onPress={handleSubmitButton}>
-            <Text style={styles.buttonTextStyle}>REGISTER</Text>
-          </TouchableOpacity>
+          <View style={styles.SectionStyle}>
+            {loading ? (
+              <Text>...Cargando</Text>
+            ) : (
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                activeOpacity={0.5}
+                onPress={() => handleSubmit()}>
+                <Text style={styles.buttonTextStyle}>Enviar</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </KeyboardAvoidingView>
       </ScrollView>
     </View>
@@ -215,17 +166,24 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: '#7DE24E',
-    borderWidth: 0,
+    borderWidth: 1,
     color: '#FFFFFF',
-    borderColor: '#7DE24E',
+    borderColor: '#E50914',
     height: 40,
     alignItems: 'center',
-    borderRadius: 30,
-    marginLeft: 35,
-    marginRight: 35,
-    marginTop: 20,
+    borderRadius: 3,
+    marginLeft: 3,
+    marginRight: 3,
+    backgroundColor: '#E50914',
+    marginTop: 5,
+    flex: 1,
+    paddingHorizontal: 10,
     marginBottom: 20,
+  },
+  titleLogin: {
+    color: '#E50914',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   buttonTextStyle: {
     color: '#FFFFFF',
@@ -234,12 +192,13 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    color: 'white',
+    color: 'black',
     paddingLeft: 15,
     paddingRight: 15,
+    borderColor: '#c1c1c1',
     borderWidth: 1,
-    borderRadius: 30,
-    borderColor: 'white',
+    height: 50,
+    borderRadius: 5,
   },
   errorTextStyle: {
     color: 'red',

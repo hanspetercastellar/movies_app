@@ -11,21 +11,25 @@ import {
 } from 'react-native';
 import MovieCard from './movie/movie';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetching, getListMovies, movies} from '../redux/slices/movie.slice';
-
+import {
+  fetching,
+  filterStatus,
+  getListMovies,
+  movies,
+} from '../redux/slices/movie.slice';
 
 const MovieList = ({navigation, data}) => {
-  const dispatch = useDispatch()
-  const moviesStore = useSelector(movies)
-  const loading = useSelector(fetching)
+  const dispatch = useDispatch();
+  const moviesStore = useSelector(movies);
+  const loading = useSelector(fetching);
+  const filter = useSelector(filterStatus);
   const getData = () => {
-    dispatch(getListMovies())
-  }
-  React.useEffect(()=>{
-    getData()
-    console.log(moviesStore)
-  },[dispatch])
-
+    dispatch(getListMovies());
+  };
+  React.useEffect(() => {
+    getData();
+    console.log(moviesStore);
+  }, []);
 
   const renderItem = ({item}) => (
     <TouchableHighlight
@@ -33,7 +37,7 @@ const MovieList = ({navigation, data}) => {
       underlayColor="#DDDDDD"
       onPress={() =>
         navigation.navigate('Details', {
-          detalle: item.MoviDetail,
+          id_movie: item.id_movi,
           titulo: item.nombre,
           imagen: item.imagen,
           duracion: item.duracion,
@@ -45,17 +49,18 @@ const MovieList = ({navigation, data}) => {
   return (
     <View style={styles.container}>
       <View style={{height: 300}}>
-        <Text style={styles.titulo}>Mis Favoritos</Text>
-        {loading ? <Text style={{color:'white'}}>...Cargando Favoritos</Text> : (
-            <FlatList
-                horizontal
-                data={moviesStore}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id_movi}
-                SeparatorComponent={() => <View style={{width: 5}} />}
-            />
+        <Text style={styles.titulo}>Lista de Peliculas</Text>
+        {loading ? (
+          <Text style={{color: 'white'}}>...Cargando Favoritos</Text>
+        ) : (
+          <FlatList
+            horizontal
+            data={moviesStore}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id_movi}
+            SeparatorComponent={() => <View style={{width: 5}} />}
+          />
         )}
-
       </View>
     </View>
   );
@@ -69,7 +74,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
     fontSize: 18,
-      color:'#ffffff',
+    color: '#ffffff',
     fontFamily: 'Lato',
     fontWeight: 'bold',
   },

@@ -19,7 +19,7 @@ import {
   requestAuth,
   user,
 } from '../redux/slices/auth.slice';
-import AsyncStorage from '@react-native-community/async-storage';
+import {storageHelpers} from '../helpers/storage.helper';
 
 const LoginScreem = (props) => {
   const [value, onChangeText] = useState('Useless Placeholder');
@@ -53,9 +53,16 @@ const LoginScreem = (props) => {
       .then((res) => {
         switch (res.status) {
           case 200:
+            console.log(res, 'respuesta del login');
             dispatch(requestAuth(res));
-            AsyncStorage.setItem('auth', JSON.stringify(res));
-            props.navigation.navigate('Home');
+            storageHelpers
+              .setItem('auth', res)
+              .then((r) => console.log(r, 'setiando storage auth'))
+              .catch((err) =>
+                console.log(err, 'ocurrio un problema al crear storage auth'),
+              );
+
+            props.navigation.replace('Home');
             break;
           case 404:
             dispatch(
@@ -122,7 +129,7 @@ const LoginScreem = (props) => {
             </View>
             <Text
               style={styles.registerTextStyle}
-              onPress={() => props.navigation.navigate('Home')}>
+              onPress={() => props.navigation.navigate('Register')}>
               Nuevo aqui ? Registrate
             </Text>
           </KeyboardAvoidingView>

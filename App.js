@@ -17,6 +17,7 @@ import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import MovieDetail from './src/screems/movieDetail';
 import LoginScreem from './src/screems/login';
+import NavigationS from './src/containers/navigationContainer';
 
 const Stack = createStackNavigator();
 const MyTheme = {
@@ -32,17 +33,7 @@ const MyTheme = {
 const App = () => {
   return (
     <Provider store={store}>
-      <NavigationContainer theme={MyTheme}>
-        <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Details" component={MovieDetail} />
-          <Stack.Screen
-            name="Login"
-            component={LoginScreem}
-            options={{title: 'Pelis App'}}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <NavigationS />
 
       {/*<StatusBar barStyle="dark-content" />*/}
       {/*<SafeAreaView>*/}
