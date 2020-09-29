@@ -53,6 +53,10 @@ const RegisterScreen = (props) => {
       if (res.success) {
         setLoading(false);
         alert(res.message);
+        setUserName('');
+        setUserEmail('');
+        setPassword('');
+        setRepeatPassword('');
       }
     });
   };

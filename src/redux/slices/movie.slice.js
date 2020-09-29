@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {uri} from '../../helpers/requests';
 
 const movieSlice = createSlice({
   name: 'movies',
@@ -55,7 +56,7 @@ export const {
 export const getListMovies = () => async (dispatch) => {
   dispatch(fetchingMovies());
 
-  const response = fetch('http://192.168.0.105:8002/api/movie/list')
+  const response = fetch(`${uri}/api/movie/list`)
     .then((response) => response.json())
     .then((data) => {
       dispatch(requestMovies(data.data));
@@ -65,7 +66,7 @@ export const getListMovies = () => async (dispatch) => {
 export const searchMovies = (input) => async (dispatch) => {
   dispatch(fetchingMovies());
 
-  const response = fetch('http://192.168.0.105:8002/api/movie/search', {
+  const response = fetch(`${uri}/api/movie/search`, {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -87,7 +88,7 @@ export const searchMovies = (input) => async (dispatch) => {
 };
 export const getListFavorites = (id_user) => async (dispatch) => {
   dispatch(fetchingFavorites());
-  await fetch('http://192.168.0.105:8002/api/movie/favorites/lists', {
+  await fetch(`${uri}/api/movie/favorites/lists`, {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',

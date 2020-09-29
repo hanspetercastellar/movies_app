@@ -20,13 +20,14 @@ import {
   user,
 } from '../redux/slices/auth.slice';
 import {storageHelpers} from '../helpers/storage.helper';
+import {uri} from '../helpers/requests';
 
 const LoginScreem = (props) => {
   const [value, onChangeText] = useState('Useless Placeholder');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const errorStatus = useSelector(error);
-  const loading = useSelector(fetching);
+  const load = useSelector(fetching);
   const dispatch = useDispatch();
   const userSession = useSelector(user);
   const handleSubmit = () => {
@@ -40,8 +41,8 @@ const LoginScreem = (props) => {
     }
     var dataToSend = {user_email: userEmail, user_password: userPassword};
     console.log(dataToSend);
-    dispatch(fetchingAuth);
-    fetch('http://192.168.0.105:8002/api/auth/login', {
+    dispatch(fetchingAuth());
+    fetch(`${uri}/api/auth/login`, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -116,8 +117,8 @@ const LoginScreem = (props) => {
               </View>
             )}
             <View style={styles.SectionStyle}>
-              {loading ? (
-                <Text>...Cargando</Text>
+              {load ? (
+                <Text style={{color: 'red'}}>...Ingresando</Text>
               ) : (
                 <TouchableOpacity
                   style={styles.buttonStyle}
