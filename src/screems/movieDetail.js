@@ -8,7 +8,6 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import Bar from '../components/bar/bar';
 import {storageHelpers} from '../helpers/storage.helper';
 import {favoritos, movies} from '../helpers/requests';
 import {getListFavorites} from '../redux/slices/movie.slice';
